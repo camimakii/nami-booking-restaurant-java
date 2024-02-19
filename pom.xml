@@ -11,7 +11,7 @@
     <groupId>es.nami</groupId>
     <artifactId>nami-booking-restaurant</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>nami-booking-restaurant</name>
     <description></description>
     <properties>

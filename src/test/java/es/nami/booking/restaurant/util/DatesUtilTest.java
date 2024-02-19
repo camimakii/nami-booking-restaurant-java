@@ -61,7 +61,6 @@ class DatesUtilTest {
     }
 
     // GENERATE DATE_TIMES WITH INTERVAL
-
     @Test
     void generateWithInterval_lastDateTimePlusIntervalNotAfterEnd_isTrue() {
         Duration duration = Duration.ofHours(2).plusMinutes(30);
