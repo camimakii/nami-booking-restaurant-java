@@ -4,6 +4,8 @@ import es.nami.booking.restaurant.core.SlotsAvailabilitiesService;
 import es.nami.booking.restaurant.core.DaysAvailabilitiesService;
 import es.nami.booking.restaurant.dto.AvailableSlots;
 import es.nami.booking.restaurant.dto.DayOfMonthOpening;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,10 @@ public class AvailabilityRestController {
     private final DaysAvailabilitiesService daysAvailabilitiesService;
     private final SlotsAvailabilitiesService slotsAvailabilitiesService;
 
+    @Operation(summary = "This is a summary of the API endpoint", description = "Detailed description of the API endpoint")
+    @ApiResponse(responseCode = "200", description = "Successful retrieval of the example endpoint")
+    @ApiResponse(responseCode = "404", description = "Restaurant not found for this ID")
+    @ApiResponse(responseCode = "400", description = "Invalid year or month")
     @GetMapping(value = "/days-of-month")
     public ResponseEntity<List<DayOfMonthOpening>> getDaysAvailabilitiesForMonth(
             @RequestParam long restaurantId,
