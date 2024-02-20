@@ -7,7 +7,8 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
 
     NOT_FOUND("NAMI_404_ITEM", HttpStatus.NOT_FOUND, "Item not found"),
-    INTERNAL_DB("NAMI_500_DB", HttpStatus.INTERNAL_SERVER_ERROR, "An error occurred while contacting the database");
+    INTERNAL_DB("NAMI_500_DB", HttpStatus.INTERNAL_SERVER_ERROR, "An error occurred while contacting the database"),
+    INTERNAL_JSON("NAMI_500_JSON", HttpStatus.INTERNAL_SERVER_ERROR, "An error occurred while serializing Json (JsonUtil)");
 
     private final String errorCode;
     private final HttpStatus httpStatus;

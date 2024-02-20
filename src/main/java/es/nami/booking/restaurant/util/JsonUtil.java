@@ -1,35 +1,61 @@
 package es.nami.booking.restaurant.util;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import es.nami.booking.restaurant.exception.ErrorCode;
+import es.nami.booking.restaurant.exception.NamiException;
+import lombok.extern.slf4j.Slf4j;
 
-import java.lang.reflect.Type;
+import java.io.IOException;
 import java.util.List;
 
+@Slf4j
 public class JsonUtil {
 
+    private static ObjectMapper objectMapper;
+
+    private static ObjectMapper getObjectMapper() {
+        if (objectMapper == null) {
+            objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule()); // Module mandatory to be able to serialize LocalTime. Added with jackson-datatype-jsr310
+        }
+        return objectMapper;
+    }
+
     public static String toJson(Object obj) {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(obj);
+        try {
+            return getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(obj);
+        } catch (IOException e) {
+            log.error("toJson", e);
+            throw new NamiException(ErrorCode.INTERNAL_JSON);
+        }
     }
 
     public static <T> T fromJson(String json, Class<T> clazz) {
-        Gson gson = new Gson();
-        return gson.fromJson(json, clazz);
+        try {
+            return getObjectMapper().readValue(json, clazz);
+        } catch (IOException e) {
+            log.error("fromJson", e);
+            throw new NamiException(ErrorCode.INTERNAL_JSON);
+        }
     }
 
     public static <T> List<T> fromJsonArray(String json, Class<T> clazz) {
-        Gson gson = new Gson();
-        Type typeOfT = TypeToken.getParameterized(List.class, clazz).getType();
-        return gson.fromJson(json, typeOfT);
+        try {
+            return getObjectMapper()
+                    .readValue(json,
+                            objectMapper
+                                    .getTypeFactory()
+                                    .constructCollectionType(List.class, clazz));
+        } catch (IOException e) {
+            log.error("fromJsonArray", e);
+            throw new NamiException(ErrorCode.INTERNAL_JSON);
+        }
     }
-
 
     public static <T> boolean areJsonEquals(String json1, String json2, Class<T> clazz) {
         T obj1 = fromJson(json1, clazz);
         T obj2 = fromJson(json2, clazz);
         return obj1.equals(obj2);
     }
-
 }

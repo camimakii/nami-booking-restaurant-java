@@ -36,7 +36,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class RestaurantGroupDataRestControllerTest {
 
-    //    private static final String GROUP_NAME = "MY_GROUP_NAME";
     private static final String API_ROOT = "/api/restaurant-group";
 
     @Autowired
@@ -150,8 +149,8 @@ class RestaurantGroupDataRestControllerTest {
         restaurantGroupCreated = JsonUtil.fromJson(jsonResponse, RestaurantGroup.class);
 
         // ASSERTIONS THAT THE RETURNED OBJECT AND THE PERSISTED OBJECT ARE WELL UPDATED
-        assertTrue(restaurantGroupCreated.getName().equals(newName));
-        assertTrue(restaurantGroupRepository.findById(restaurantGroupCreated.getId()).get().getName().equals(newName));
+        assertEquals(newName, restaurantGroupCreated.getName());
+        assertEquals(newName, restaurantGroupRepository.findById(restaurantGroupCreated.getId()).get().getName());
 
     }
 

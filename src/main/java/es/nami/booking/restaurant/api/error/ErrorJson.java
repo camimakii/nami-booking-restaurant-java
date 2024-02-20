@@ -1,11 +1,11 @@
 package es.nami.booking.restaurant.api.error;
 
 import es.nami.booking.restaurant.exception.ErrorCode;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Schema
+@NoArgsConstructor
 public class ErrorJson {
 
     private String errorCode;

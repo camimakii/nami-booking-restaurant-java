@@ -1,7 +1,9 @@
-package es.nami.booking.restaurant.api.data.restaurant;
+package es.nami.booking.restaurant.api.data;
 
 import es.nami.booking.restaurant.core.data.RestaurantDataService;
-import es.nami.booking.restaurant.core.data.RestaurantGroupDataService;
+import es.nami.booking.restaurant.core.data.SpecialOpeningHoursDataService;
+import es.nami.booking.restaurant.data.opening.SpecialOpeningHours;
+import es.nami.booking.restaurant.data.opening.SpecialOpeningHoursRepository;
 import es.nami.booking.restaurant.data.restaurant.Restaurant;
 import es.nami.booking.restaurant.data.restaurant.RestaurantGroup;
 import es.nami.booking.restaurant.data.restaurant.RestaurantGroupRepository;
@@ -22,6 +24,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,31 +39,39 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Slf4j
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class RestaurantDataRestControllerTest {
+class SpecialOpeningHoursDataRestControllerTest {
 
-    private static final String API_ROOT = "/api/restaurant";
+    private static final String API_ROOT = "/api/special-opening-hours";
 
     @Autowired
     private MockMvc mockMvc;
     @Autowired
+    private RestaurantGroupRepository restaurantGroupRepository;
+    @Autowired
     private RestaurantRepository restaurantRepository;
     @Autowired
-    private RestaurantGroupRepository restaurantGroupRepository;
+    private SpecialOpeningHoursRepository specialOpeningHoursRepository;
 
-    private static Restaurant restaurantCreated;
+    private static SpecialOpeningHours specialOpeningHoursCreated;
 
     @Test
     @Order(1)
-    @DisplayName("POST Create New Restaurant")
-    public void createNewRestaurant() throws Exception {
+    @DisplayName("POST Create New SpecialOpeningHours")
+    public void createNewSpecialOpeningHours() throws Exception {
         // SETUP REQUEST
         RestaurantGroup group = new RestaurantGroup();
         group.setName("name");
         group = restaurantGroupRepository.save(group);
-        Restaurant restaurantToCreate = new Restaurant();
-        restaurantToCreate.setName("restaurant_name");
-        restaurantToCreate.setRestaurantGroup(group);
-        String request = JsonUtil.toJson(restaurantToCreate);
+        Restaurant restaurant = new Restaurant();
+        restaurant.setRestaurantGroup(group);
+        restaurant.setName("restau_name");
+        restaurant = restaurantRepository.save(restaurant);
+        SpecialOpeningHours specialOpeningHoursToCreate = new SpecialOpeningHours();
+        specialOpeningHoursToCreate.setRestaurant(restaurant);
+        specialOpeningHoursToCreate.setDurationInMinutes(2 * 60); // 2 hours
+        specialOpeningHoursToCreate.setStartDateTime(LocalDateTime.of(2000, 1, 1, 10, 30));
+
+        String request = JsonUtil.toJson(specialOpeningHoursToCreate);
 
         // CALL ENDPOINT
         MvcResult result = mockMvc.perform(post(API_ROOT)
@@ -71,41 +82,47 @@ class RestaurantDataRestControllerTest {
 
         // SETUP RESPONSE
         String jsonResponse = result.getResponse().getContentAsString();
-        restaurantCreated = JsonUtil.fromJson(jsonResponse, Restaurant.class);
+        specialOpeningHoursCreated = JsonUtil.fromJson(jsonResponse, SpecialOpeningHours.class);
 
         // SETUP MISSING ID IN FORMER ENTITY TO HAVE GOOD COMPARISON
-        restaurantToCreate.setId(restaurantCreated.getId());
+        specialOpeningHoursToCreate.setId(specialOpeningHoursCreated.getId());
 
         // ASSERTIONS TO ENSURE RETURNED OBJECT AND PERSISTED OBJECT ARE THE SAME
-        assertEquals(restaurantToCreate, restaurantCreated);
-        assertEquals(restaurantToCreate, restaurantRepository.findById(restaurantCreated.getId()).get());
+        assertEquals(specialOpeningHoursToCreate, specialOpeningHoursCreated);
+        assertEquals(specialOpeningHoursToCreate, specialOpeningHoursRepository.findById(specialOpeningHoursCreated.getId()).get());
     }
 
     @Test
     @Order(2)
-    @DisplayName("GET Retrieve Restaurant by ID")
-    public void findRestaurantById() throws Exception {
+    @DisplayName("GET Retrieve all SpecialOpeningHours of Restaurant")
+    public void findAllSpecialOpeningHoursOfRestaurants() throws Exception {
         // CALL ENDPOINT
-        MvcResult result = mockMvc.perform(get(API_ROOT + "/" + restaurantCreated.getId()))
+        MvcResult result = mockMvc.perform(
+                        get(API_ROOT + "/all")
+                                .param("restaurantId", specialOpeningHoursCreated.getRestaurant().getId().toString())
+                )
                 .andExpect(status().isOk())
                 .andReturn();
 
         // SETUP RESPONSE
         String jsonResponse = result.getResponse().getContentAsString();
-        Restaurant resultRestaurant = JsonUtil.fromJson(jsonResponse, Restaurant.class);
+        List<SpecialOpeningHours> resultRestaurantGroup = JsonUtil.fromJsonArray(jsonResponse, SpecialOpeningHours.class);
 
-        // ASSERTIONS TO ENSURE THE RETURNED OBJECT IS CORRECTLY THE ONE WE EXPECT
-        assertTrue(restaurantCreated.equals(resultRestaurant));
+        // ASSERTIONS THAT THE EXPECTED OBJECT IS PART OF THE LIST
+        assertTrue(resultRestaurantGroup.contains(specialOpeningHoursCreated));
     }
 
     @Test
     @Order(3)
-    @DisplayName("GET Retrieve non-existing Restaurant by ID")
-    public void findRestaurantById_notExisting() throws Exception {
+    @DisplayName("GET Retrieve all SpecialOpeningHours of non-existing Restaurant")
+    public void findAllOpeningHoursOfRestaurant_notExisting() throws Exception {
         String wrongId = "999";
 
         // CALL ENDPOINT
-        MvcResult result = mockMvc.perform(get(API_ROOT + "/" + wrongId))
+        MvcResult result = mockMvc.perform(
+                        get(API_ROOT + "/all")
+                                .param("restaurantId", wrongId)
+                )
                 .andExpect(status().isNotFound())
                 .andReturn();
 
@@ -119,35 +136,49 @@ class RestaurantDataRestControllerTest {
 
     @Test
     @Order(4)
-    @DisplayName("GET Retrieve all Restaurants of a RestaurantGroup")
-    public void findAllRestaurantsOfGroup() throws Exception {
+    @DisplayName("PUT Update a SpecialOpeningHours")
+    public void updateSpecialOpeningHours() throws Exception {
+        LocalDateTime dayUpdated = LocalDateTime.now();
+        int durationUpdated = 4 * 60;
+        specialOpeningHoursCreated.setDurationInMinutes(durationUpdated);
+        specialOpeningHoursCreated.setStartDateTime(dayUpdated);
+
+        String request = JsonUtil.toJson(specialOpeningHoursCreated);
+
         // CALL ENDPOINT
-        MvcResult result = mockMvc.perform(
-                        get(API_ROOT + "/all")
-                                .param("restaurantGroupId", restaurantCreated.getRestaurantGroup().getId().toString())
-                )
+        MvcResult result = mockMvc.perform(put(API_ROOT)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
                 .andExpect(status().isOk())
                 .andReturn();
 
         // SETUP RESPONSE
         String jsonResponse = result.getResponse().getContentAsString();
-        List<Restaurant> resultRestaurantGroup = JsonUtil.fromJsonArray(jsonResponse, Restaurant.class);
+        specialOpeningHoursCreated = JsonUtil.fromJson(jsonResponse, SpecialOpeningHours.class);
 
-        // ASSERTIONS THAT THE EXPECTED OBJECT IS PART OF THE LIST
-        assertTrue(resultRestaurantGroup.contains(restaurantCreated));
+        // ASSERTIONS THAT THE RETURNED OBJECT AND THE PERSISTED OBJECT ARE WELL UPDATED
+        assertEquals(dayUpdated.getDayOfMonth(), specialOpeningHoursCreated.getStartDateTime().getDayOfMonth());
+        assertEquals(dayUpdated.getHour(), specialOpeningHoursCreated.getStartDateTime().getHour());
+        assertEquals(dayUpdated.getDayOfMonth(), specialOpeningHoursRepository.findById(specialOpeningHoursCreated.getId()).get().getStartDateTime().getDayOfMonth());
+        assertEquals(dayUpdated.getHour(), specialOpeningHoursRepository.findById(specialOpeningHoursCreated.getId()).get().getStartDateTime().getHour());
+        assertEquals(durationUpdated, specialOpeningHoursCreated.getDurationInMinutes());
+        assertEquals(durationUpdated, specialOpeningHoursRepository.findById(specialOpeningHoursCreated.getId()).get().getDurationInMinutes());
     }
 
     @Test
     @Order(5)
-    @DisplayName("GET Retrieve all Restaurants of a non-existing RestaurantGroup")
-    public void findAllRestaurantsOfGroup_notExistingGroup() throws Exception {
-        String wrongId = "999";
+    @DisplayName("PUT Update a non-existing SpecialOpeningHours")
+    public void updateSpecialOpeningHours_notExisting() throws Exception {
+        long wrongId = 999;
+        SpecialOpeningHours fake = new SpecialOpeningHours();
+        fake.setId(wrongId);
+
+        String request = JsonUtil.toJson(fake);
 
         // CALL ENDPOINT
-        MvcResult result = mockMvc.perform(
-                        get(API_ROOT + "/all")
-                                .param("restaurantGroupId", wrongId)
-                )
+        MvcResult result = mockMvc.perform(put(API_ROOT)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
                 .andExpect(status().isNotFound())
                 .andReturn();
 
@@ -155,78 +186,29 @@ class RestaurantDataRestControllerTest {
         ErrorAssertUtil.assertErrorResponse(
                 ErrorCode.NOT_FOUND,
                 result,
-                RestaurantGroupDataService.ENTITY_NAME,
-                wrongId);
+                SpecialOpeningHoursDataService.ENTITY_NAME,
+                wrongId + "");
+
     }
 
     @Test
     @Order(6)
-    @DisplayName("PUT Update a Restaurant")
-    public void updateRestaurant() throws Exception {
-        String newName = "abc";
-        restaurantCreated.setName(newName);
-
-        String request = JsonUtil.toJson(restaurantCreated);
+    @DisplayName("DELETE a SpecialOpeningHours")
+    public void deleteSpecialOpeningHoursCreated() throws Exception {
 
         // CALL ENDPOINT
-        MvcResult result = mockMvc.perform(put(API_ROOT)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(request))
-                .andExpect(status().isOk())
-                .andReturn();
+        mockMvc.perform(delete(API_ROOT + "/" + specialOpeningHoursCreated.getId()))
+                .andExpect(status().isNoContent());
 
-        // SETUP RESPONSE
-        String jsonResponse = result.getResponse().getContentAsString();
-        restaurantCreated = JsonUtil.fromJson(jsonResponse, Restaurant.class);
+        // ASSERTIONS THAT THE EXPECTED OBJECT DOESN'T EXIST ANYMORE
+        assertTrue(specialOpeningHoursRepository.findById(specialOpeningHoursCreated.getId()).isEmpty());
 
-        // ASSERTIONS THAT THE RETURNED OBJECT AND THE PERSISTED OBJECT ARE WELL UPDATED
-        assertEquals(newName, restaurantCreated.getName());
-        assertEquals(newName, restaurantRepository.findById(restaurantCreated.getId()).get().getName());
     }
 
     @Test
     @Order(7)
-    @DisplayName("PUT Update a non-existing Restaurant")
-    public void updateRestaurant_notExisting() throws Exception {
-        long wrongId = 999;
-        Restaurant fakeRestaurant = new Restaurant();
-        fakeRestaurant.setId(wrongId);
-        fakeRestaurant.setRestaurantGroup(restaurantCreated.getRestaurantGroup());
-
-        String request = JsonUtil.toJson(fakeRestaurant);
-
-        // CALL ENDPOINT
-        MvcResult result = mockMvc.perform(put(API_ROOT)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(request))
-                .andExpect(status().isNotFound())
-                .andReturn();
-
-        // ASSERT ERROR AND MESSAGE IS THE ONE EXPECTED
-        ErrorAssertUtil.assertErrorResponse(
-                ErrorCode.NOT_FOUND,
-                result,
-                RestaurantDataService.ENTITY_NAME,
-                wrongId + "");
-    }
-
-    @Test
-    @Order(8)
-    @DisplayName("DELETE a Restaurant")
-    public void deleteRestaurantGroupCreated() throws Exception {
-        // CALL ENDPOINT
-        mockMvc.perform(delete(API_ROOT + "/" + restaurantCreated.getId()))
-                .andExpect(status().isNoContent());
-
-        // ASSERTIONS THAT THE EXPECTED OBJECT DOESN'T EXIST ANYMORE
-        // TODO: when implemented, test that the other informations are also deleted
-        assertTrue(restaurantRepository.findById(restaurantCreated.getId()).isEmpty());
-    }
-
-    @Test
-    @Order(9)
-    @DisplayName("DELETE a non-existing Restaurant")
-    public void deleteRestaurantGroupCreated_notExisting() throws Exception {
+    @DisplayName("DELETE a non-existing SpecialOpeningHours")
+    public void deleteOpeningHoursCreated_notExisting() throws Exception {
         String wrongId = "999";
 
         // CALL ENDPOINT
@@ -238,7 +220,7 @@ class RestaurantDataRestControllerTest {
         ErrorAssertUtil.assertErrorResponse(
                 ErrorCode.NOT_FOUND,
                 result,
-                RestaurantDataService.ENTITY_NAME,
+                SpecialOpeningHoursDataService.ENTITY_NAME,
                 wrongId);
     }
 

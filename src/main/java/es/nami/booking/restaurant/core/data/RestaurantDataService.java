@@ -25,6 +25,7 @@ public class RestaurantDataService {
     private final BookingSettingsRepository bookingSettingsRepository;
 
     public Restaurant createNewRestaurant(Restaurant restaurant) {
+        restaurant.setId(null);
         return restaurantRepository.save(restaurant);
     }
 

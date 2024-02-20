@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -21,16 +22,22 @@ public class OpeningHoursDataService {
     private final OpeningHoursRepository openingHoursRepository;
     private final RestaurantDataService restaurantDataService;
 
+    public OpeningHours createOneOpeningHours(OpeningHours openingHours) {
+        openingHours.setId(null);
+        return openingHoursRepository.save(openingHours);
+    }
+
+    public OpeningHours findOpeningHoursById(long openingHoursId) {
+        Optional<OpeningHours> openingHoursOptional = openingHoursRepository.findById(openingHoursId);
+        return NamiException.ifNotFound(openingHoursOptional, ENTITY_NAME, openingHoursId);
+    }
+
     public List<OpeningHours> findOpeningHoursByRestaurant(long restaurantId) {
         return openingHoursRepository.findAllByRestaurant(restaurantDataService.findRestaurantById(restaurantId));
     }
 
     public List<OpeningHours> findOpeningHoursByRestaurantAndDayOfWeek(Restaurant restaurant, DayOfWeek dayOfWeek) {
         return openingHoursRepository.findAllByRestaurantAndDayOfWeek(restaurant, dayOfWeek);
-    }
-
-    public OpeningHours createOneOpeningHours(OpeningHours openingHours) {
-        return openingHoursRepository.save(openingHours);
     }
 
     public OpeningHours updateOpeningHours(OpeningHours openingHours) {
@@ -40,9 +47,9 @@ public class OpeningHoursDataService {
         return openingHoursRepository.save(openingHours);
     }
 
-    public boolean deleteOneOpeningHours(long openHoursId) {
-        openingHoursRepository.deleteById(openHoursId);
-        return true;
+    public void deleteOneOpeningHours(long openingHoursId) {
+        OpeningHours openingHours = findOpeningHoursById(openingHoursId);
+        openingHoursRepository.delete(openingHours);
     }
 
 }
