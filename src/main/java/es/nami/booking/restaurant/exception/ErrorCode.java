@@ -6,8 +6,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ErrorCode {
 
-    NOT_FOUND("NAMI_404", HttpStatus.NOT_FOUND, "Item not found"),
-    INTERNAL_DB("NAMI_500", HttpStatus.INTERNAL_SERVER_ERROR, "An error occurred while contacting the database");
+    NOT_FOUND("NAMI_404_ITEM", HttpStatus.NOT_FOUND, "Item not found"),
+    INTERNAL_DB("NAMI_500_DB", HttpStatus.INTERNAL_SERVER_ERROR, "An error occurred while contacting the database");
 
     private final String errorCode;
     private final HttpStatus httpStatus;

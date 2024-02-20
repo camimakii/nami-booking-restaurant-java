@@ -1,11 +1,10 @@
-package es.nami.booking.restaurant.core;
+package es.nami.booking.restaurant.core.data;
 
-import es.nami.booking.restaurant.data.Restaurant;
-import es.nami.booking.restaurant.data.RestaurantGroup;
-import es.nami.booking.restaurant.data.RestaurantRepository;
 import es.nami.booking.restaurant.data.booking.BookingSettings;
 import es.nami.booking.restaurant.data.booking.BookingSettingsRepository;
-import es.nami.booking.restaurant.data.opening.OpeningHoursRepository;
+import es.nami.booking.restaurant.data.restaurant.Restaurant;
+import es.nami.booking.restaurant.data.restaurant.RestaurantGroup;
+import es.nami.booking.restaurant.data.restaurant.RestaurantRepository;
 import es.nami.booking.restaurant.exception.NamiException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,14 +18,19 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RestaurantDataService {
 
+    public static final String ENTITY_NAME = "Restaurant";
+
     private final RestaurantGroupDataService restaurantGroupDataService;
     private final RestaurantRepository restaurantRepository;
     private final BookingSettingsRepository bookingSettingsRepository;
-    private final OpeningHoursRepository openingHoursRepository;
+
+    public Restaurant createNewRestaurant(Restaurant restaurant) {
+        return restaurantRepository.save(restaurant);
+    }
 
     public Restaurant findRestaurantById(long restaurantId) {
         Optional<Restaurant> restaurantOptional = restaurantRepository.findById(restaurantId);
-        return NamiException.ifNotFound(restaurantOptional, "Restaurant", restaurantId);
+        return NamiException.ifNotFound(restaurantOptional, ENTITY_NAME, restaurantId);
     }
 
     public List<Restaurant> findRestaurantsByRestaurantGroup(Long groupId) {
@@ -34,6 +38,19 @@ public class RestaurantDataService {
         return restaurantRepository.findAllByRestaurantGroup(group);
     }
 
+    public Restaurant updateRestaurant(Restaurant restaurant) {
+        if (!restaurantRepository.existsById(restaurant.getId())) {
+            throw NamiException.notFoundConstructor(ENTITY_NAME, restaurant.getId());
+        }
+        return restaurantRepository.save(restaurant);
+    }
+
+    public void deleteRestaurantAndCascade(Long restaurantId) {
+        Restaurant restaurant = findRestaurantById(restaurantId);
+        restaurantRepository.delete(restaurant);
+    }
+
+    // TODO: to move later
     public BookingSettings findSettingsByRestaurant(Restaurant restaurant) {
         Optional<BookingSettings> bookingSettingsOptional = bookingSettingsRepository.findOneByRestaurant(restaurant);
         return NamiException.ifNotFound(bookingSettingsOptional, "BookingSettings for restaurant", restaurant.getId());

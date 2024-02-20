@@ -19,4 +19,8 @@ public class NamiException extends RuntimeException {
                 new NamiException(ErrorCode.NOT_FOUND, entityName + " with id [" + id + "] not found"));
     }
 
+    public static NamiException notFoundConstructor(String entityName, long id) {
+        return new NamiException(ErrorCode.NOT_FOUND, entityName + " with id [" + id + "] not found");
+    }
+
 }

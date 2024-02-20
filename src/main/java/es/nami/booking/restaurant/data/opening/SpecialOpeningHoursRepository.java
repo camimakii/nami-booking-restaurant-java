@@ -1,6 +1,6 @@
 package es.nami.booking.restaurant.data.opening;
 
-import es.nami.booking.restaurant.data.Restaurant;
+import es.nami.booking.restaurant.data.restaurant.Restaurant;
 import org.springframework.data.repository.CrudRepository;
 
 import java.time.LocalDateTime;

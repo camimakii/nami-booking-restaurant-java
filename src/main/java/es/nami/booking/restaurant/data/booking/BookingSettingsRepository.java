@@ -1,6 +1,6 @@
 package es.nami.booking.restaurant.data.booking;
 
-import es.nami.booking.restaurant.data.Restaurant;
+import es.nami.booking.restaurant.data.restaurant.Restaurant;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package es.nami.booking.restaurant.data;
+package es.nami.booking.restaurant.data.restaurant;
 
 import org.springframework.data.repository.CrudRepository;
 

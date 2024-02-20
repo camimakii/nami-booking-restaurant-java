@@ -1,7 +1,7 @@
 package es.nami.booking.restaurant.data.opening;
 
 
-import es.nami.booking.restaurant.data.Restaurant;
+import es.nami.booking.restaurant.data.restaurant.Restaurant;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

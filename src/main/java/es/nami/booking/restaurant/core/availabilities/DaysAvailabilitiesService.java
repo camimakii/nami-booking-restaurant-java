@@ -1,9 +1,13 @@
-package es.nami.booking.restaurant.core;
+package es.nami.booking.restaurant.core.availabilities;
 
-import es.nami.booking.restaurant.data.Restaurant;
+import es.nami.booking.restaurant.core.data.ClosureDayDataService;
+import es.nami.booking.restaurant.core.data.OpeningHoursDataService;
+import es.nami.booking.restaurant.core.data.RestaurantDataService;
+import es.nami.booking.restaurant.core.data.SpecialOpeningHoursDataService;
+import es.nami.booking.restaurant.data.restaurant.Restaurant;
 import es.nami.booking.restaurant.data.opening.OpeningHours;
 import es.nami.booking.restaurant.data.opening.SpecialOpeningHours;
-import es.nami.booking.restaurant.dto.DayOfMonthOpening;
+import es.nami.booking.restaurant.dto.DayOfMonth;
 import es.nami.booking.restaurant.util.DatesUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,21 +24,23 @@ import java.util.stream.Collectors;
 public class DaysAvailabilitiesService {
 
     private final RestaurantDataService restaurantDataService;
-    private final OpeningDataService openingDataService;
+    private final OpeningHoursDataService openingHoursDataService;
+    private final SpecialOpeningHoursDataService specialOpeningHoursDataService;
+    private final ClosureDayDataService closureDayDataService;
 
-    public List<DayOfMonthOpening> getDaysAvailabilitiesOfMonthForRestaurant(long restaurantId, int year, int month) {
+    public List<DayOfMonth> getDaysAvailabilitiesOfMonthForRestaurant(long restaurantId, int year, int month) {
         Restaurant restaurant = restaurantDataService.findRestaurantById(restaurantId);
         List<LocalDate> daysOfMonth = DatesUtil.getDatesForMonthAndYear(year, month);
-        List<DayOfMonthOpening> days = new ArrayList<>();
+        List<DayOfMonth> days = new ArrayList<>();
         for (LocalDate date : daysOfMonth) {
-            DayOfMonthOpening opening = DayOfMonthOpening.builder()
+            DayOfMonth opening = DayOfMonth.builder()
                     .date(date)
                     .isPassed(LocalDate.now().isAfter(date))
                     .build();
             if (!opening.isPassed()) {
-                opening.setOpen(openingDataService.findClosureDayForRestaurantAndDate(restaurant, date).isEmpty());
+                opening.setOpen(closureDayDataService.findClosureDayForRestaurantAndDate(restaurant, date).isEmpty());
                 if (opening.isOpen()) {
-                    List<OpeningHours> openingHours = openingDataService.findOpeningHoursByRestaurantAndDayOfWeek(restaurant, date.getDayOfWeek());
+                    List<OpeningHours> openingHours = openingHoursDataService.findOpeningHoursByRestaurantAndDayOfWeek(restaurant, date.getDayOfWeek());
                     for (OpeningHours openingHour : openingHours) {
                         if (!openingHour.isOpen()) {
                             opening.setOpen(false);
@@ -42,7 +48,7 @@ public class DaysAvailabilitiesService {
                         }
                     }
                     if (opening.isOpen()) {
-                        List<SpecialOpeningHours> specialOpeningHours = openingDataService.findSpecialOpeningHoursForADate(restaurant, date);
+                        List<SpecialOpeningHours> specialOpeningHours = specialOpeningHoursDataService.findSpecialOpeningHoursForADate(restaurant, date);
                         if (!specialOpeningHours.isEmpty()) {
                             opening.setWithSpecialOpeningHours(true);
                             opening.setSpecialOpeningHoursId(

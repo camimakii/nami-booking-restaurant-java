@@ -1,11 +1,14 @@
-package es.nami.booking.restaurant.core;
+package es.nami.booking.restaurant.core.availabilities;
 
-import es.nami.booking.restaurant.data.Restaurant;
+import es.nami.booking.restaurant.core.data.OpeningHoursDataService;
+import es.nami.booking.restaurant.core.data.RestaurantDataService;
+import es.nami.booking.restaurant.core.data.SpecialOpeningHoursDataService;
+import es.nami.booking.restaurant.data.restaurant.Restaurant;
 import es.nami.booking.restaurant.data.booking.BookingSettings;
 import es.nami.booking.restaurant.data.opening.OpeningHours;
 import es.nami.booking.restaurant.data.opening.SpecialOpeningHours;
 import es.nami.booking.restaurant.dto.AvailableSlots;
-import es.nami.booking.restaurant.dto.DayOfMonthOpening;
+import es.nami.booking.restaurant.dto.DayOfMonth;
 import es.nami.booking.restaurant.util.DatesUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +25,10 @@ import java.util.List;
 public class SlotsAvailabilitiesService {
 
     private final RestaurantDataService restaurantDataService;
-    private final OpeningDataService openingDataService;
+    private final OpeningHoursDataService openingHoursDataService;
+    private final SpecialOpeningHoursDataService specialOpeningHoursDataService;
 
-    public List<AvailableSlots> getSlotsAvailabilitiesForDay(DayOfMonthOpening day, long restaurantId) {
+    public List<AvailableSlots> getSlotsAvailabilitiesForDay(DayOfMonth day, long restaurantId) {
         if (!day.isOpen() || day.isPassed()) {
             return new ArrayList<>();
         }
@@ -38,10 +42,10 @@ public class SlotsAvailabilitiesService {
         }
     }
 
-    public List<AvailableSlots> getSlotsAvailabilitiesWithSpecialOpeningHours(DayOfMonthOpening day, Restaurant restaurant, BookingSettings bookingSettings) {
+    public List<AvailableSlots> getSlotsAvailabilitiesWithSpecialOpeningHours(DayOfMonth day, Restaurant restaurant, BookingSettings bookingSettings) {
         List<AvailableSlots> availableSlots = new ArrayList<>();
         List<SpecialOpeningHours> specialOpeningHoursList =
-                openingDataService.findSpecialOpeningHoursByIds(day.getSpecialOpeningHoursId());
+                specialOpeningHoursDataService.findSpecialOpeningHoursByIds(day.getSpecialOpeningHoursId());
         for (SpecialOpeningHours openingHours : specialOpeningHoursList) {
             LocalDateTime start = openingHours.getStartDateTime();
             LocalDateTime end = start.plus(openingHours.getDuration());
@@ -57,10 +61,10 @@ public class SlotsAvailabilitiesService {
         return availableSlots;
     }
 
-    public List<AvailableSlots> getSlotsAvailabilitiesWithUsualOpeningHours(DayOfMonthOpening day, Restaurant restaurant, BookingSettings bookingSettings) {
+    public List<AvailableSlots> getSlotsAvailabilitiesWithUsualOpeningHours(DayOfMonth day, Restaurant restaurant, BookingSettings bookingSettings) {
         List<AvailableSlots> availableSlots = new ArrayList<>();
         List<OpeningHours> openingHoursList =
-                openingDataService.findOpeningHoursByRestaurantAndDayOfWeek(restaurant, day.getDate().getDayOfWeek());
+                openingHoursDataService.findOpeningHoursByRestaurantAndDayOfWeek(restaurant, day.getDate().getDayOfWeek());
         for (OpeningHours openingHours : openingHoursList) {
             LocalDateTime start = openingHours.getStartTime().atDate(LocalDate.now());
             LocalDateTime end = start.plus(openingHours.getDuration());
