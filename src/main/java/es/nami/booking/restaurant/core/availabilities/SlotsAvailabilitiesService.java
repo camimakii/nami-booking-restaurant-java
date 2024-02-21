@@ -42,6 +42,25 @@ public class SlotsAvailabilitiesService {
         }
     }
 
+    public List<AvailableSlots> getSlotsAvailabilitiesWithUsualOpeningHours(DayOfMonth day, Restaurant restaurant, BookingSettings bookingSettings) {
+        List<AvailableSlots> availableSlots = new ArrayList<>();
+        List<OpeningHours> openingHoursList =
+                openingHoursDataService.findOpeningHoursByRestaurantAndDayOfWeek(restaurant, day.getDate().getDayOfWeek());
+        for (OpeningHours openingHours : openingHoursList) {
+            LocalDateTime start = openingHours.getStartTime().atDate(day.getDate());
+            LocalDateTime end = start.plus(openingHours.getDuration());
+            List<LocalDateTime> bookingTimes = DatesUtil.generateStartDateTimesWithInterval(start, end, bookingSettings.getDuration());
+            for (LocalDateTime bookingTime : bookingTimes) {
+                // TODO: check bookings and capacity
+                availableSlots.add(AvailableSlots.builder()
+                        .startDateTime(bookingTime)
+                        .isAvailable(true)
+                        .build());
+            }
+        }
+        return availableSlots;
+    }
+
     public List<AvailableSlots> getSlotsAvailabilitiesWithSpecialOpeningHours(DayOfMonth day, Restaurant restaurant, BookingSettings bookingSettings) {
         List<AvailableSlots> availableSlots = new ArrayList<>();
         List<SpecialOpeningHours> specialOpeningHoursList =
@@ -52,25 +71,6 @@ public class SlotsAvailabilitiesService {
             List<LocalDateTime> bookingTimes = DatesUtil.generateStartDateTimesWithInterval(start, end, bookingSettings.getDuration());
             for (LocalDateTime bookingTime : bookingTimes) {
                 // TODO: check bookings and capacity with restaurant infos
-                availableSlots.add(AvailableSlots.builder()
-                        .startDateTime(bookingTime)
-                        .isAvailable(true)
-                        .build());
-            }
-        }
-        return availableSlots;
-    }
-
-    public List<AvailableSlots> getSlotsAvailabilitiesWithUsualOpeningHours(DayOfMonth day, Restaurant restaurant, BookingSettings bookingSettings) {
-        List<AvailableSlots> availableSlots = new ArrayList<>();
-        List<OpeningHours> openingHoursList =
-                openingHoursDataService.findOpeningHoursByRestaurantAndDayOfWeek(restaurant, day.getDate().getDayOfWeek());
-        for (OpeningHours openingHours : openingHoursList) {
-            LocalDateTime start = openingHours.getStartTime().atDate(LocalDate.now());
-            LocalDateTime end = start.plus(openingHours.getDuration());
-            List<LocalDateTime> bookingTimes = DatesUtil.generateStartDateTimesWithInterval(start, end, bookingSettings.getDuration());
-            for (LocalDateTime bookingTime : bookingTimes) {
-                // TODO: check bookings and capacity
                 availableSlots.add(AvailableSlots.builder()
                         .startDateTime(bookingTime)
                         .isAvailable(true)

@@ -19,7 +19,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "exceptional_business_hours")
+@Table(name = "special_opening_hours")
 @Getter
 @Setter
 public class SpecialOpeningHours {
@@ -31,6 +31,9 @@ public class SpecialOpeningHours {
     @ManyToOne
     @JoinColumn(name = "restaurant_id", nullable = false)
     private Restaurant restaurant;
+
+    @Column(nullable = false)
+    private boolean isOpen;
 
     @Column(nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")

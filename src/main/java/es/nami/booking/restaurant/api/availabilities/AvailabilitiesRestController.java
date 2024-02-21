@@ -1,5 +1,6 @@
 package es.nami.booking.restaurant.api.availabilities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import es.nami.booking.restaurant.core.availabilities.DaysAvailabilitiesService;
 import es.nami.booking.restaurant.core.availabilities.SlotsAvailabilitiesService;
 import es.nami.booking.restaurant.dto.AvailableSlots;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -30,9 +32,10 @@ public class AvailabilitiesRestController {
     public ResponseEntity<List<DayOfMonth>> getDaysAvailabilitiesForMonth(
             @RequestParam long restaurantId,
             @RequestParam int month,
-            @RequestParam int year) {
+            @RequestParam int year,
+            @RequestParam @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy") LocalDate today) {
         return new ResponseEntity<>(
-                daysAvailabilitiesService.getDaysAvailabilitiesOfMonthForRestaurant(restaurantId, month, year),
+                daysAvailabilitiesService.getDaysAvailabilitiesOfMonthForRestaurant(restaurantId, month, year, today),
                 HttpStatus.OK);
     }
 

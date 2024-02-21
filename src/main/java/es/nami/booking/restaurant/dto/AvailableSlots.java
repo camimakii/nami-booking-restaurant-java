@@ -1,6 +1,7 @@
 package es.nami.booking.restaurant.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import es.nami.booking.restaurant.util.JsonUtil;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,4 +18,9 @@ public class AvailableSlots {
     private boolean isAvailable;
     // private int availablePlaces;
 
+
+    @Override
+    public String toString() {
+        return JsonUtil.toJson(this);
+    }
 }

@@ -10,6 +10,7 @@ import java.time.Duration;
 @Entity
 @Table(name = "booking_settings")
 @Getter
+@Setter
 public class BookingSettings {
 
     @Id
@@ -34,7 +35,7 @@ public class BookingSettings {
 
     @Column(nullable = false)
     @Setter
-    private long defaultLengthOfBookingInMinutes;
+    private int defaultLengthOfBookingInMinutes;
 
     public Duration getDuration() {
         return Duration.ofMinutes(this.defaultLengthOfBookingInMinutes);
