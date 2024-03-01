@@ -1,10 +1,10 @@
 package es.nami.booking.restaurant.availabilities.api;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import es.nami.booking.restaurant.availabilities.service.DaysAvailabilitiesService;
-import es.nami.booking.restaurant.availabilities.service.SlotsAvailabilitiesService;
 import es.nami.booking.restaurant.availabilities.dto.AvailableSlots;
 import es.nami.booking.restaurant.availabilities.dto.DayOfMonth;
+import es.nami.booking.restaurant.availabilities.service.DaysAvailabilitiesService;
+import es.nami.booking.restaurant.availabilities.service.SlotsAvailabilitiesService;
 import es.nami.booking.restaurant.util.Constants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

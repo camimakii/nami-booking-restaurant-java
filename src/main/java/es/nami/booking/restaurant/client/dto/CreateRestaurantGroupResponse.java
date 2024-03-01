@@ -1,6 +1,7 @@
-package es.nami.booking.restaurant.auth.dto;
+package es.nami.booking.restaurant.client.dto;
 
 import es.nami.booking.restaurant.annotation.JsonToString;
+import es.nami.booking.restaurant.auth.dto.AuthenticationResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,10 +14,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonToString
-public class AuthenticationResponse {
+public class CreateRestaurantGroupResponse {
 
-    private String userEmail;
-    private String accessToken;
-    private String refreshToken;
+    private long newRestaurantGroupId;
+    private long newRestaurantId;
+    private AuthenticationResponse auth;
 
 }

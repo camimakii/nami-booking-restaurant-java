@@ -1,6 +1,7 @@
 package es.nami.booking.restaurant.availabilities.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import es.nami.booking.restaurant.util.Constants;
 import es.nami.booking.restaurant.util.JsonUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class AvailableSlots {
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy_HH-mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.DATE_TIME_FORMAT)
     private LocalDateTime startDateTime;
     private boolean isAvailable;
     // private int availablePlaces;

@@ -1,5 +1,6 @@
 package es.nami.booking.restaurant.client.data;
 
+import es.nami.booking.restaurant.annotation.JsonToString;
 import es.nami.booking.restaurant.util.JsonUtil;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,6 +22,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonToString
 public class Restaurant {
 
     @Id
@@ -28,18 +30,11 @@ public class Restaurant {
     private Long id;
 
     @Column(nullable = false)
-    @Setter
     private String name;
 
     @ManyToOne
     @JoinColumn(name = "restaurant_group_id", nullable = false)
-    @Setter
     private RestaurantGroup restaurantGroup;
-
-    @Override
-    public String toString() {
-        return JsonUtil.toJson(this);
-    }
 
     @Override
     public boolean equals(Object o) {

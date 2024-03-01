@@ -1,14 +1,14 @@
 package es.nami.booking.restaurant.availabilities.service;
 
-import es.nami.booking.restaurant.opening.service.OpeningHoursDataService;
-import es.nami.booking.restaurant.client.service.RestaurantDataService;
-import es.nami.booking.restaurant.opening.service.SpecialOpeningHoursDataService;
-import es.nami.booking.restaurant.client.data.Restaurant;
-import es.nami.booking.restaurant.booking.BookingSettings;
-import es.nami.booking.restaurant.opening.data.OpeningHours;
-import es.nami.booking.restaurant.opening.data.SpecialOpeningHours;
 import es.nami.booking.restaurant.availabilities.dto.AvailableSlots;
 import es.nami.booking.restaurant.availabilities.dto.DayOfMonth;
+import es.nami.booking.restaurant.booking.BookingSettings;
+import es.nami.booking.restaurant.client.data.Restaurant;
+import es.nami.booking.restaurant.client.service.RestaurantService;
+import es.nami.booking.restaurant.opening.data.OpeningHours;
+import es.nami.booking.restaurant.opening.data.SpecialOpeningHours;
+import es.nami.booking.restaurant.opening.service.OpeningHoursDataService;
+import es.nami.booking.restaurant.opening.service.SpecialOpeningHoursDataService;
 import es.nami.booking.restaurant.util.DatesUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SlotsAvailabilitiesService {
 
-    private final RestaurantDataService restaurantDataService;
+    private final RestaurantService restaurantService;
     private final OpeningHoursDataService openingHoursDataService;
     private final SpecialOpeningHoursDataService specialOpeningHoursDataService;
 
@@ -32,8 +32,8 @@ public class SlotsAvailabilitiesService {
             return new ArrayList<>();
         }
 
-        Restaurant restaurant = restaurantDataService.findRestaurantById(restaurantId);
-        BookingSettings bookingSettings = restaurantDataService.findSettingsByRestaurant(restaurant);
+        Restaurant restaurant = restaurantService.findRestaurantById(restaurantId);
+        BookingSettings bookingSettings = restaurantService.findSettingsByRestaurant(restaurant);
         if (day.isWithSpecialOpeningHours()) {
             return getSlotsAvailabilitiesWithSpecialOpeningHours(day, restaurant, bookingSettings);
         } else {

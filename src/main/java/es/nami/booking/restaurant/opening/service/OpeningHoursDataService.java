@@ -1,7 +1,7 @@
 package es.nami.booking.restaurant.opening.service;
 
 import es.nami.booking.restaurant.client.data.Restaurant;
-import es.nami.booking.restaurant.client.service.RestaurantDataService;
+import es.nami.booking.restaurant.client.service.RestaurantService;
 import es.nami.booking.restaurant.error.NamiException;
 import es.nami.booking.restaurant.opening.data.OpeningHours;
 import es.nami.booking.restaurant.opening.data.OpeningHoursRepository;
@@ -21,7 +21,7 @@ public class OpeningHoursDataService {
     public static final String ENTITY_NAME = "OpeningHours";
 
     private final OpeningHoursRepository openingHoursRepository;
-    private final RestaurantDataService restaurantDataService;
+    private final RestaurantService restaurantService;
 
     public OpeningHours createOneOpeningHours(OpeningHours openingHours) {
         openingHours.setId(null);
@@ -40,7 +40,7 @@ public class OpeningHoursDataService {
     }
 
     public List<OpeningHours> findOpeningHoursByRestaurant(long restaurantId) {
-        return openingHoursRepository.findAllByRestaurant(restaurantDataService.findRestaurantById(restaurantId));
+        return openingHoursRepository.findAllByRestaurant(restaurantService.findRestaurantById(restaurantId));
     }
 
     public List<OpeningHours> findOpeningHoursByRestaurantAndDayOfWeek(Restaurant restaurant, DayOfWeek dayOfWeek) {

@@ -1,7 +1,7 @@
 package es.nami.booking.restaurant.opening.api;
 
-import es.nami.booking.restaurant.opening.service.OpeningHoursDataService;
 import es.nami.booking.restaurant.opening.data.OpeningHours;
+import es.nami.booking.restaurant.opening.service.OpeningHoursDataService;
 import es.nami.booking.restaurant.util.Constants;
 import es.nami.booking.restaurant.util.JsonUtil;
 import io.swagger.v3.oas.annotations.Operation;

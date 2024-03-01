@@ -2,7 +2,7 @@ package es.nami.booking.restaurant.core.availabilities;
 
 import es.nami.booking.restaurant.availabilities.service.SlotsAvailabilitiesService;
 import es.nami.booking.restaurant.opening.service.OpeningHoursDataService;
-import es.nami.booking.restaurant.client.service.RestaurantDataService;
+import es.nami.booking.restaurant.client.service.RestaurantService;
 import es.nami.booking.restaurant.opening.service.SpecialOpeningHoursDataService;
 import es.nami.booking.restaurant.booking.BookingSettings;
 import es.nami.booking.restaurant.opening.data.OpeningHours;
@@ -45,7 +45,7 @@ class SlotsAvailabilitiesServiceTest {
     @Autowired
     private SlotsAvailabilitiesService slotsAvailabilitiesService;
     @MockBean
-    private RestaurantDataService restaurantDataService;
+    private RestaurantService restaurantService;
     @MockBean
     private OpeningHoursDataService openingHoursDataService;
     @MockBean
@@ -62,11 +62,11 @@ class SlotsAvailabilitiesServiceTest {
     private void setupMocks() {
         restaurant = new Restaurant();
         restaurant.setId(1L);
-        when(restaurantDataService.findRestaurantById(eq(restaurant.getId()))).thenReturn(restaurant);
+        when(restaurantService.findRestaurantById(eq(restaurant.getId()))).thenReturn(restaurant);
 
         bookingSettings = new BookingSettings();
         bookingSettings.setDefaultLengthOfBookingInMinutes(2 * 60); // 2 hours dinner
-        when(restaurantDataService.findSettingsByRestaurant(eq(restaurant))).thenReturn(bookingSettings);
+        when(restaurantService.findSettingsByRestaurant(eq(restaurant))).thenReturn(bookingSettings);
 
         // MONDAY is closed the entire day
 

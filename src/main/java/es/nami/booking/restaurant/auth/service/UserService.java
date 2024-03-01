@@ -16,14 +16,13 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public User registerOneUser(User user) {
-        user.setId(null);
-        return userRepository.save(user);
+    public User findUserByEmail(String email) {
+        Optional<User> userOptional = userRepository.findById(email);
+        return NamiException.orElseThrow(userOptional, ENTITY_NAME, email);
     }
 
-    public User findUserByEmail(String email) {
-        Optional<User> userOptional = userRepository.findByEmail(email);
-        return NamiException.orElseThrow(userOptional, ENTITY_NAME, email);
+    public Optional<User> findOptionalUserByEmail(String email) {
+        return userRepository.findById(email);
     }
 
 }

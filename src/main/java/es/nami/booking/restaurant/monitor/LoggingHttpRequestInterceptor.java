@@ -8,7 +8,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 @Slf4j
-public class PerformanceLogHttpRequestInterceptor implements HandlerInterceptor {
+public class LoggingHttpRequestInterceptor implements HandlerInterceptor {
 
     private final static String ATTRIBUTE_NAME = "startTime";
 

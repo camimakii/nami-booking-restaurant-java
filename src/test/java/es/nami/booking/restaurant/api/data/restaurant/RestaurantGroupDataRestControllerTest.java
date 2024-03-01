@@ -1,26 +1,14 @@
 package es.nami.booking.restaurant.api.data.restaurant;
 
-import es.nami.booking.restaurant.client.service.RestaurantDataService;
-import es.nami.booking.restaurant.client.service.RestaurantGroupDataService;
 import es.nami.booking.restaurant.client.data.RestaurantGroup;
 import es.nami.booking.restaurant.client.data.RestaurantGroupRepository;
-import es.nami.booking.restaurant.error.ErrorCode;
-import es.nami.booking.restaurant.util.ErrorAssertUtil;
-import es.nami.booking.restaurant.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -28,7 +16,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc

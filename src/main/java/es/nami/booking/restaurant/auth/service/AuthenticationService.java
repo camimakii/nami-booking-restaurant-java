@@ -3,6 +3,7 @@ package es.nami.booking.restaurant.auth.service;
 import es.nami.booking.restaurant.auth.data.Token;
 import es.nami.booking.restaurant.auth.data.TokenRepository;
 import es.nami.booking.restaurant.auth.data.User;
+import es.nami.booking.restaurant.auth.data.UserRepository;
 import es.nami.booking.restaurant.auth.dto.AuthenticationResponse;
 import es.nami.booking.restaurant.auth.dto.UserRequest;
 import es.nami.booking.restaurant.error.ErrorCode;
@@ -20,22 +21,22 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuthenticationService {
 
-    @Value("${application.security.pepper}")
-    private String pepper;
-
+    private final UserRepository userRepository;
     private final UserService userService;
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    @Value("${application.security.pepper}")
+    private String pepper;
 
-    public AuthenticationResponse generateNewTokenForNewUser(UserRequest request) {
+    public AuthenticationResponse generateTokenForNewUser(UserRequest request) {
 
         // 1. Create new user in DB with encoded password
         User newUser = new User();
         newUser.setEmail(request.getEmail());
         newUser.setPassword(encodeSeasonedPassword(request.getPassword()));
-        newUser = userService.registerOneUser(newUser);
+        newUser = userRepository.save(newUser);
 
         // 2. Create token
         String token = jwtService.generateToken(newUser);
@@ -43,8 +44,8 @@ public class AuthenticationService {
         saveUserToken(newUser, token);
 
         // 3. Return the token
-//        return token;
         return AuthenticationResponse.builder()
+                .userEmail(newUser.getEmail())
                 .accessToken(token)
                 .refreshToken(refreshToken)
                 .build();
@@ -74,6 +75,7 @@ public class AuthenticationService {
 
         // 5. Return tokens
         return AuthenticationResponse.builder()
+                .userEmail(user.getEmail())
                 .accessToken(token)
                 .refreshToken(refreshToken)
                 .build();
@@ -90,7 +92,7 @@ public class AuthenticationService {
     }
 
     private void revokeAllUserTokens(User user) {
-        List<Token> validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
+        List<Token> validUserTokens = tokenRepository.findAllValidTokenByUser(user.getEmail());
         if (validUserTokens.isEmpty())
             return;
         validUserTokens.forEach(token -> {
@@ -140,6 +142,7 @@ public class AuthenticationService {
             saveUserToken(user, accessToken);
 
             return AuthenticationResponse.builder()
+                    .userEmail(user.getEmail())
                     .accessToken(accessToken)
                     .refreshToken(refreshToken)
                     .build();

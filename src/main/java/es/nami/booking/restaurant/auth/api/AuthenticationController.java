@@ -27,16 +27,20 @@ public class AuthenticationController {
     @GetMapping("/token")
     public ResponseEntity<AuthenticationResponse> getToken(
             @RequestParam String email,
-            @RequestParam String password
+            @RequestParam String password,
+            HttpServletRequest request
     ) {
+        log.debug("[REQUEST] {} {} email:", request.getMethod(), request.getRequestURI(), email);
         return ResponseEntity.ok(authenticationService.getToken(email, password));
     }
 
-    @PostMapping("/user")
-    public ResponseEntity<AuthenticationResponse> createNewUser(
-            @RequestBody UserRequest userRequest
+    @PostMapping("/register")
+    public ResponseEntity<AuthenticationResponse> registerNewUser(
+            @RequestBody UserRequest userRequest,
+            HttpServletRequest request
     ) {
-        return ResponseEntity.ok(authenticationService.generateNewTokenForNewUser(userRequest));
+        log.debug("[REQUEST] {} {} email:", request.getMethod(), request.getRequestURI(), userRequest.getEmail());
+        return ResponseEntity.ok(authenticationService.generateTokenForNewUser(userRequest));
     }
 
     @GetMapping("/refresh-token")

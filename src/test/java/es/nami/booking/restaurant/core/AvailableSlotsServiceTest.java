@@ -2,7 +2,7 @@ package es.nami.booking.restaurant.core;
 
 import es.nami.booking.restaurant.availabilities.service.SlotsAvailabilitiesService;
 import es.nami.booking.restaurant.opening.service.OpeningHoursDataService;
-import es.nami.booking.restaurant.client.service.RestaurantDataService;
+import es.nami.booking.restaurant.client.service.RestaurantService;
 import es.nami.booking.restaurant.opening.service.SpecialOpeningHoursDataService;
 import es.nami.booking.restaurant.booking.BookingSettings;
 import es.nami.booking.restaurant.client.data.Restaurant;
@@ -37,7 +37,7 @@ class AvailableSlotsServiceTest {
     @Autowired
     private SlotsAvailabilitiesService slotsAvailabilitiesService;
     @MockBean
-    private RestaurantDataService restaurantDataService;
+    private RestaurantService restaurantService;
     @MockBean
     private OpeningHoursDataService openingHoursDataService;
     @MockBean
@@ -71,8 +71,8 @@ class AvailableSlotsServiceTest {
         BookingSettings bookingSettings = new BookingSettings();
         SlotsAvailabilitiesService spy = spy(slotsAvailabilitiesService);
 
-        when(restaurantDataService.findRestaurantById(anyLong())).thenReturn(restaurant);
-        when(restaurantDataService.findSettingsByRestaurant(restaurant)).thenReturn(bookingSettings);
+        when(restaurantService.findRestaurantById(anyLong())).thenReturn(restaurant);
+        when(restaurantService.findSettingsByRestaurant(restaurant)).thenReturn(bookingSettings);
         when(specialOpeningHoursDataService.findSpecialOpeningHoursByIds(anyList())).thenReturn(new ArrayList<>());
 
         spy.getSlotsAvailabilitiesForDay(day, 1L);
@@ -92,8 +92,8 @@ class AvailableSlotsServiceTest {
         BookingSettings bookingSettings = new BookingSettings();
         SlotsAvailabilitiesService spy = spy(slotsAvailabilitiesService);
 
-        when(restaurantDataService.findRestaurantById(anyLong())).thenReturn(restaurant);
-        when(restaurantDataService.findSettingsByRestaurant(eq(restaurant))).thenReturn(bookingSettings);
+        when(restaurantService.findRestaurantById(anyLong())).thenReturn(restaurant);
+        when(restaurantService.findSettingsByRestaurant(eq(restaurant))).thenReturn(bookingSettings);
         when(openingHoursDataService.findOpeningHoursByRestaurantAndDayOfWeek(eq(restaurant), any(DayOfWeek.class))).thenReturn(new ArrayList<>());
 
         spy.getSlotsAvailabilitiesForDay(day, 1L);

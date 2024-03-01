@@ -16,11 +16,11 @@ import java.util.Optional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class RestaurantDataService {
+public class RestaurantService {
 
     public static final String ENTITY_NAME = "Restaurant";
 
-    private final RestaurantGroupDataService restaurantGroupDataService;
+    private final RestaurantGroupService restaurantGroupService;
     private final RestaurantRepository restaurantRepository;
     private final BookingSettingsRepository bookingSettingsRepository;
 
@@ -41,7 +41,7 @@ public class RestaurantDataService {
     }
 
     public List<Restaurant> findRestaurantsByRestaurantGroup(Long groupId) {
-        RestaurantGroup group = restaurantGroupDataService.findRestaurantGroupById(groupId);
+        RestaurantGroup group = restaurantGroupService.findRestaurantGroupById(groupId);
         return restaurantRepository.findAllByRestaurantGroup(group);
     }
 

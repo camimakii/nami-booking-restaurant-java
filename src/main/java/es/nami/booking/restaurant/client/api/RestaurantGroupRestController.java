@@ -1,7 +1,9 @@
 package es.nami.booking.restaurant.client.api;
 
-import es.nami.booking.restaurant.client.service.RestaurantGroupDataService;
 import es.nami.booking.restaurant.client.data.RestaurantGroup;
+import es.nami.booking.restaurant.client.dto.CreateRestaurantGroupRequest;
+import es.nami.booking.restaurant.client.dto.CreateRestaurantGroupResponse;
+import es.nami.booking.restaurant.client.service.RestaurantGroupService;
 import es.nami.booking.restaurant.util.Constants;
 import es.nami.booking.restaurant.util.JsonUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,22 +29,20 @@ import java.util.List;
 @RequestMapping(Constants.API_URL + "restaurant-group")
 @RequiredArgsConstructor // To replace Autowired on constructor
 @Slf4j
-public class RestaurantGroupDataRestController {
+public class RestaurantGroupRestController {
 
-    private final RestaurantGroupDataService restaurantGroupDataService;
+    private final RestaurantGroupService restaurantGroupService;
 
-    @PostMapping
-    @Operation(summary = "POST New RestaurantGroup", description = "Create a new group of restaurants in DB and returns it with its generated ID")
+    @PostMapping("/new")
+    @Operation(summary = "POST New RestaurantGroup", description = "Create a new group of restaurants with its admin user in DB and returns it with its generated ID")
     @ApiResponse(responseCode = "201", description = "Successfully created")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<RestaurantGroup> createNewRestaurantGroup(
-            @RequestBody RestaurantGroup restaurantGroup,
+    public ResponseEntity<CreateRestaurantGroupResponse> createNewRestaurantGroup(
+            @RequestBody CreateRestaurantGroupRequest createRestaurantGroupRequest,
             HttpServletRequest request
     ) {
-
-        log.debug("[REQUEST] {} {} body:\n{}", request.getMethod(), request.getRequestURI(), JsonUtil.toJson(restaurantGroup));
-        return ResponseEntity.status(HttpStatus.CREATED).body(restaurantGroupDataService.createNewRestaurantGroup(restaurantGroup));
-
+        log.debug("[REQUEST] {} {}", request.getMethod(), request.getRequestURI()); // No log of password
+        return ResponseEntity.status(HttpStatus.CREATED).body(restaurantGroupService.createNewRestaurantGroup(createRestaurantGroupRequest));
     }
 
     @GetMapping("/{restaurantGroupId}")
@@ -55,7 +55,7 @@ public class RestaurantGroupDataRestController {
     ) {
 
         log.debug("[REQUEST] {} {} id:{}", request.getMethod(), request.getRequestURI(), restaurantGroupId);
-        return ResponseEntity.ok(restaurantGroupDataService.findRestaurantGroupById(restaurantGroupId));
+        return ResponseEntity.ok(restaurantGroupService.findRestaurantGroupById(restaurantGroupId));
 
     }
 
@@ -68,7 +68,7 @@ public class RestaurantGroupDataRestController {
     ) {
 
         log.debug("[REQUEST] {} {}", request.getMethod(), request.getRequestURI());
-        return ResponseEntity.ok(restaurantGroupDataService.findAllRestaurantGroups());
+        return ResponseEntity.ok(restaurantGroupService.findAllRestaurantGroups());
 
     }
 
@@ -81,7 +81,7 @@ public class RestaurantGroupDataRestController {
             HttpServletRequest request
     ) {
         log.debug("[REQUEST] {} {} body:\n{}", request.getMethod(), request.getRequestURI(), JsonUtil.toJson(restaurantGroup));
-        return ResponseEntity.ok(restaurantGroupDataService.updateRestaurantGroup(restaurantGroup));
+        return ResponseEntity.ok(restaurantGroupService.updateRestaurantGroup(restaurantGroup));
 
     }
 
@@ -95,7 +95,7 @@ public class RestaurantGroupDataRestController {
     ) {
 
         log.debug("[REQUEST] {} {} id:{}", request.getMethod(), request.getRequestURI(), restaurantGroupId);
-        restaurantGroupDataService.deleteRestaurantGroupAndCascade(restaurantGroupId);
+        restaurantGroupService.deleteRestaurantGroupAndCascade(restaurantGroupId);
         return ResponseEntity.noContent().build();
 
     }

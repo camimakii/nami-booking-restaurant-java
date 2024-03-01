@@ -1,7 +1,7 @@
 package es.nami.booking.restaurant.client.api;
 
-import es.nami.booking.restaurant.client.service.RestaurantDataService;
 import es.nami.booking.restaurant.client.data.Restaurant;
+import es.nami.booking.restaurant.client.service.RestaurantService;
 import es.nami.booking.restaurant.util.Constants;
 import es.nami.booking.restaurant.util.JsonUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,9 +28,9 @@ import java.util.List;
 @RequestMapping(Constants.API_URL + "restaurant")
 @RequiredArgsConstructor
 @Slf4j
-public class RestaurantDataRestController {
+public class RestaurantRestController {
 
-    private final RestaurantDataService restaurantDataService;
+    private final RestaurantService restaurantService;
 
     @PostMapping
     @Operation(summary = "POST New Restaurant", description = "Create a new restaurant owned by a group")
@@ -41,7 +41,7 @@ public class RestaurantDataRestController {
             HttpServletRequest request
     ) {
         log.debug("[REQUEST] {} {} body:\n{}", request.getMethod(), request.getRequestURI(), JsonUtil.toJson(restaurant));
-        return ResponseEntity.status(HttpStatus.CREATED).body(restaurantDataService.createNewRestaurant(restaurant));
+        return ResponseEntity.status(HttpStatus.CREATED).body(restaurantService.createNewRestaurant(restaurant));
     }
 
     @GetMapping("/all")
@@ -53,7 +53,7 @@ public class RestaurantDataRestController {
             HttpServletRequest request
     ) {
         log.debug("[REQUEST] {} {}", request.getMethod(), request.getRequestURI());
-        return ResponseEntity.ok(restaurantDataService.findRestaurantsByRestaurantGroup(restaurantGroupId));
+        return ResponseEntity.ok(restaurantService.findRestaurantsByRestaurantGroup(restaurantGroupId));
     }
 
     @GetMapping("/{restaurantId}")
@@ -65,7 +65,7 @@ public class RestaurantDataRestController {
             HttpServletRequest request
     ) {
         log.debug("[REQUEST] {} {} id:{}", request.getMethod(), request.getRequestURI(), restaurantId);
-        return ResponseEntity.ok(restaurantDataService.findRestaurantById(restaurantId));
+        return ResponseEntity.ok(restaurantService.findRestaurantById(restaurantId));
     }
 
     @PutMapping
@@ -77,7 +77,7 @@ public class RestaurantDataRestController {
             HttpServletRequest request
     ) {
         log.debug("[REQUEST] {} {} body:\n{}", request.getMethod(), request.getRequestURI(), JsonUtil.toJson(restaurant));
-        return ResponseEntity.ok(restaurantDataService.updateRestaurant(restaurant));
+        return ResponseEntity.ok(restaurantService.updateRestaurant(restaurant));
     }
 
     @DeleteMapping(value = "/{restaurantId}")
@@ -89,7 +89,7 @@ public class RestaurantDataRestController {
             HttpServletRequest request
     ) {
         log.debug("[REQUEST] {} {} id:{}", request.getMethod(), request.getRequestURI(), restaurantId);
-        restaurantDataService.deleteRestaurantAndCascade(restaurantId);
+        restaurantService.deleteRestaurantAndCascade(restaurantId);
         return ResponseEntity.noContent().build();
     }
 

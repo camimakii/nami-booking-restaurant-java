@@ -1,7 +1,7 @@
-package es.nami.booking.restaurant.booking;
+package es.nami.booking.restaurant.client.data;
 
-import es.nami.booking.restaurant.client.data.Restaurant;
-import jakarta.persistence.Column;
+import es.nami.booking.restaurant.annotation.JsonToString;
+import es.nami.booking.restaurant.auth.data.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -16,16 +16,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.Duration;
-
 @Entity
-@Table(name = "booking_settings")
+@Table(name = "user_restaurant_roles")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookingSettings {
+@JsonToString
+public class UserRestaurantRole {
 
     @Id
     @GeneratedValue
@@ -33,26 +32,13 @@ public class BookingSettings {
 
     @ManyToOne
     @JoinColumn(name = "restaurant_id", nullable = false)
-    @Setter
     private Restaurant restaurant;
 
-//    @Deprecated
-//    @Enumerated(EnumType.STRING)
-//    @Column(nullable = false)
-//    @Setter
-//    private BookingTimingType bookingTimingType;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    @Setter
-    private BookingCapacityType bookingCapacityType;
-
-    @Column(nullable = false)
-    @Setter
-    private int defaultLengthOfBookingInMinutes;
-
-    public Duration getDuration() {
-        return Duration.ofMinutes(this.defaultLengthOfBookingInMinutes);
-    }
+    private Role role;
 
 }
