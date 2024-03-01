@@ -1,6 +1,7 @@
 package es.nami.booking.restaurant;
 
-import es.nami.booking.restaurant.api.PerformanceLogHttpRequestInterceptor;
+import es.nami.booking.restaurant.monitor.PerformanceLogHttpRequestInterceptor;
+import es.nami.booking.restaurant.util.Constants;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -23,8 +24,8 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry
                 .addInterceptor(new PerformanceLogHttpRequestInterceptor())
-                .addPathPatterns("/api/**") // Apply interceptor to paths that match this pattern
-                .excludePathPatterns("/api/auth/**", "/monitor/**"); // Exclude paths that match this pattern
+                .addPathPatterns(Constants.API_URL + "**"); // Apply interceptor to paths that match this pattern
+//                .excludePathPatterns("/api/auth/**", "/monitor/**"); // Exclude paths that match this pattern
     }
 
 }

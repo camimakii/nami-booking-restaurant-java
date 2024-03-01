@@ -1,13 +1,13 @@
 package es.nami.booking.restaurant.core;
 
-import es.nami.booking.restaurant.core.availabilities.SlotsAvailabilitiesService;
-import es.nami.booking.restaurant.core.data.OpeningHoursDataService;
-import es.nami.booking.restaurant.core.data.RestaurantDataService;
-import es.nami.booking.restaurant.core.data.SpecialOpeningHoursDataService;
-import es.nami.booking.restaurant.data.booking.BookingSettings;
-import es.nami.booking.restaurant.data.restaurant.Restaurant;
-import es.nami.booking.restaurant.dto.AvailableSlots;
-import es.nami.booking.restaurant.dto.DayOfMonth;
+import es.nami.booking.restaurant.availabilities.service.SlotsAvailabilitiesService;
+import es.nami.booking.restaurant.opening.service.OpeningHoursDataService;
+import es.nami.booking.restaurant.client.service.RestaurantDataService;
+import es.nami.booking.restaurant.opening.service.SpecialOpeningHoursDataService;
+import es.nami.booking.restaurant.booking.BookingSettings;
+import es.nami.booking.restaurant.client.data.Restaurant;
+import es.nami.booking.restaurant.availabilities.dto.AvailableSlots;
+import es.nami.booking.restaurant.availabilities.dto.DayOfMonth;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

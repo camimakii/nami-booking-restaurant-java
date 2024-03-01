@@ -1,14 +1,14 @@
 package es.nami.booking.restaurant.api.data;
 
-import es.nami.booking.restaurant.core.data.OpeningHoursDataService;
-import es.nami.booking.restaurant.core.data.RestaurantDataService;
-import es.nami.booking.restaurant.data.opening.OpeningHours;
-import es.nami.booking.restaurant.data.opening.OpeningHoursRepository;
-import es.nami.booking.restaurant.data.restaurant.Restaurant;
-import es.nami.booking.restaurant.data.restaurant.RestaurantGroup;
-import es.nami.booking.restaurant.data.restaurant.RestaurantGroupRepository;
-import es.nami.booking.restaurant.data.restaurant.RestaurantRepository;
-import es.nami.booking.restaurant.exception.ErrorCode;
+import es.nami.booking.restaurant.opening.service.OpeningHoursDataService;
+import es.nami.booking.restaurant.client.service.RestaurantDataService;
+import es.nami.booking.restaurant.opening.data.OpeningHours;
+import es.nami.booking.restaurant.opening.data.OpeningHoursRepository;
+import es.nami.booking.restaurant.client.data.Restaurant;
+import es.nami.booking.restaurant.client.data.RestaurantGroup;
+import es.nami.booking.restaurant.client.data.RestaurantGroupRepository;
+import es.nami.booking.restaurant.client.data.RestaurantRepository;
+import es.nami.booking.restaurant.error.ErrorCode;
 import es.nami.booking.restaurant.util.ErrorAssertUtil;
 import es.nami.booking.restaurant.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;

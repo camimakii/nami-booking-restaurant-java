@@ -1,7 +1,7 @@
 package es.nami.booking.restaurant.util;
 
-import es.nami.booking.restaurant.api.error.ErrorJson;
-import es.nami.booking.restaurant.exception.ErrorCode;
+import es.nami.booking.restaurant.error.ErrorJson;
+import es.nami.booking.restaurant.error.ErrorCode;
 import lombok.SneakyThrows;
 import org.springframework.test.web.servlet.MvcResult;
 

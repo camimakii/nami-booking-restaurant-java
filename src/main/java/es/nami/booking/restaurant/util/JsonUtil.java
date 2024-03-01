@@ -2,8 +2,8 @@ package es.nami.booking.restaurant.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import es.nami.booking.restaurant.exception.ErrorCode;
-import es.nami.booking.restaurant.exception.NamiException;
+import es.nami.booking.restaurant.error.ErrorCode;
+import es.nami.booking.restaurant.error.NamiException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;

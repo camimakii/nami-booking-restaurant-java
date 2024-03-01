@@ -1,12 +1,13 @@
 package es.nami.booking.restaurant.core.availabilities;
 
-import es.nami.booking.restaurant.core.data.OpeningHoursDataService;
-import es.nami.booking.restaurant.core.data.RestaurantDataService;
-import es.nami.booking.restaurant.core.data.SpecialOpeningHoursDataService;
-import es.nami.booking.restaurant.data.opening.OpeningHours;
-import es.nami.booking.restaurant.data.opening.SpecialOpeningHours;
-import es.nami.booking.restaurant.data.restaurant.Restaurant;
-import es.nami.booking.restaurant.dto.DayOfMonth;
+import es.nami.booking.restaurant.availabilities.service.DaysAvailabilitiesService;
+import es.nami.booking.restaurant.opening.service.OpeningHoursDataService;
+import es.nami.booking.restaurant.client.service.RestaurantDataService;
+import es.nami.booking.restaurant.opening.service.SpecialOpeningHoursDataService;
+import es.nami.booking.restaurant.opening.data.OpeningHours;
+import es.nami.booking.restaurant.opening.data.SpecialOpeningHours;
+import es.nami.booking.restaurant.client.data.Restaurant;
+import es.nami.booking.restaurant.availabilities.dto.DayOfMonth;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
