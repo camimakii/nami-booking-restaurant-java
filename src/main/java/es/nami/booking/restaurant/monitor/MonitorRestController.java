@@ -1,5 +1,8 @@
 package es.nami.booking.restaurant.monitor;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import es.nami.booking.restaurant.error.ErrorCode;
+import es.nami.booking.restaurant.error.ErrorJson;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +24,7 @@ public class MonitorRestController {
         return new ResponseEntity<>("Alive", HttpStatus.OK);
     }
 
-    @GetMapping("/test")
+    @GetMapping("test")
     public ResponseEntity<Json> testGet(
             HttpServletRequest request
     ) {
@@ -31,21 +34,23 @@ public class MonitorRestController {
         return ResponseEntity.ok(json);
     }
 
-    @PostMapping("/test")
-    public ResponseEntity<Json> testPost(
+    @PostMapping("test")
+    public ResponseEntity testPost(
             @RequestBody Json json,
             HttpServletRequest request
     ) {
         if (json.isOk()) {
             return ResponseEntity.ok(json);
         } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new ErrorJson(ErrorCode.FORBIDDEN));
         }
     }
 
     @Data
     public static class Json {
         private String name;
+        @JsonProperty("isOk")
         private boolean isOk;
     }
 

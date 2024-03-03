@@ -24,10 +24,10 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class SecurityConfiguration {
     private static final String[] WHITE_LIST_URL = {
             "/",
-            Constants.API_URL + "auth/**",
-            Constants.API_URL + "restaurant-group/new",
             "/isAlive",
             "/test",
+            Constants.API_URL + "auth/**",
+            Constants.API_URL + "restaurant-group/new",
             "/v2/api-docs",
             "/v3/api-docs",
             "/v3/api-docs/**",
@@ -48,12 +48,14 @@ public class SecurityConfiguration {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
-                        req.requestMatchers(WHITE_LIST_URL)
-                                .permitAll()
-//                                .requestMatchers(Constants.ADMIN_API_URL+"**")
-//                                .hasAnyRole(ADMIN.name(), MANAGER.name())
-                                .anyRequest()
-                                .authenticated())
+                        req
+                                .requestMatchers(WHITE_LIST_URL).permitAll()
+//                                .requestMatchers(POST, "test").permitAll()
+//                                .requestMatchers(GET, "test").permitAll()
+////                                .requestMatchers(Constants.ADMIN_API_URL+"**")
+////                                .hasAnyRole(ADMIN.name(), MANAGER.name())
+                                .anyRequest().authenticated())
+                // .anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
